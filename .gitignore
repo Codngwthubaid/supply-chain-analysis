@@ -1,9 +1,6 @@
 # Data (large files - don't push to GitHub)
 data/
 
-# Figures output
-figures/
-
 # Python
 __pycache__/
 *.py[cod]
