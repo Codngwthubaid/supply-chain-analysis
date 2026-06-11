@@ -1,0 +1,26 @@
+BUSINESS CONTEXT : 
+The company operates a global e-commerce platform selling products across categories including sporting, goods, fitness equipments, outdoor gear, footwear, and apparel across multiple international regions
+
+
+CORE PROBLEM :
+Actual shipping times frequently deviate from scheduled delivery windows, creating eroded customer trust reduced order profitability and an inability to make reliable commitments to buyers at point of purchase
+
+
+ANALYTICAL OBJECTIVES :
+1. Understand the current state of delivery performance across all dimensions (region, mode, time, segment)
+2. Quantify the financial impact of delays an order profitability
+3. Identify the primary operational bottlenecks driving late deliveries
+4. Build a predictive model to flag high-risk orders before they are shipped (advanced)
+5. Deliver actionable recommendations to improve on-time delivery and profitability
+
+
+
+==================================================================================================================
+
+
+BUSINESS PROBLEM :
+A global e-commerce company operating across multiple regions manages end-to-end order fullfillment, including shipping and delivery for products like sporting, goods, etc. The company is facing inconsistent delivery performance, where actual shipping times often deviate from scheduled timelines, leading to late deliveries and unpredictable order profitability
+
+
+DESIRED OUTCOME :
+The goal is to analyze operations, indentify bottlenecks and build a predictive model system to reduce delays, optimized shipping decisions, and improve overall products and efficiency
