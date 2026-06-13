@@ -109,7 +109,7 @@ df['Order Processing Time'] = (df['shipping date (DateOrders)'] - df['order date
 df['Delay'] = (df['Order Processing Time'] - df['Days for shipment (scheduled)'])
 df['Is_Delayed'] = df['Delay'] > 0
 df['order_month'] = df['order date (DateOrders)'].dt.month
-df['order_day'] = df['order date (DateOrders)'].dt.day
+df['order_day'] = df['order date (DateOrders)'].dt.day_name()
 df['order_hour'] = df['order date (DateOrders)'].dt.hour
 
 # display(df.describe().T)
@@ -273,40 +273,208 @@ def compute_delay_percentage_by_category(category):
     return category_df
 
 # setting custom categories from dataset columns
-categories = [
-    'Order Region',
-    'Customer Segment',
-    'Shipping0 Mode',
-    'Order Status',
-    'Type',
-    'Department Name'
-]
+# categories = [
+#     'Order Region',
+#     'Customer Segment',
+#     'Shipping0 Mode',
+#     'Order Status',
+#     'Type',
+#     'Department Name'
+# ]
 
-fig, axes = plt.subplots(2,3, figsize=(16,7), constrained_layout=True)
-axes = axes.flatten()
+# fig, axes = plt.subplots(2,3, figsize=(16,7), constrained_layout=True)
+# axes = axes.flatten()
 
-for ax, category in zip(axes, categories):
-    category_df = compute_delay_percentage_by_category(category)
-    sns.barplot(
-        data=category_df,
-        x='delay_percent',
-        y=category,
-        ax=ax,
-        palette='viridis'
-    )
-    ax.set_title(f'Delay Percentage by {category}', fontsize=10)
-    ax.set_xlabel('')
-    ax.set_ylabel(category)
-    for i, row in category_df.reset_index().iterrows():
-        ax.text(
-            row['delay_percent'] - 15,
-            i, 
-            f"{row['delay_percent']:.1f}%", 
-            va='center', 
-            fontsize=10, 
-            color='white'
-        )
+# for ax, category in zip(axes, categories):
+#     category_df = compute_delay_percentage_by_category(category)
+#     sns.barplot(
+#         data=category_df,
+#         x='delay_percent',
+#         y=category,
+#         ax=ax,
+#         palette='viridis'
+#     )
+#     ax.set_title(f'Delay Percentage by {category}', fontsize=10)
+#     ax.set_xlabel('')
+#     ax.set_ylabel(category)
+#     for i, row in category_df.reset_index().iterrows():
+#         ax.text(
+#             row['delay_percent'] - 15,
+#             i, 
+#             f"{row['delay_percent']:.1f}%", 
+#             va='center', 
+#             fontsize=10, 
+#             color='white'
+#         )
 
-plt.savefig('figures/delay_percentage_by_category.png', dpi=300, bbox_inches='tight')
-plt.show()
+# plt.savefig('figures/delay_percentage_by_category.png', dpi=300, bbox_inches='tight')
+# plt.show()
+
+
+# root cause analysis 
+# def top_drivers_for_region(region):
+#     df_region = df[df['Order Region'] == region].copy()
+
+#     drivers = [
+#         'Customer Segment',
+#         'Shipping Mode',
+#         'Order Status',
+#         'Type',
+#         'Department Name'
+#     ]
     
+#     all_factors = []
+#     for factor in drivers:
+#         temp = (
+#             df_region.groupby(factor).agg(
+#                 total_orders = ('Delay','count'),
+#                 late_orders = ('Is_Delayed', 'sum'),
+#                 avg_delay = ('Delay', 'mean')
+#             ).reset_index()
+#         )
+#         temp['delay_percent'] = (temp['late_orders'] / temp['total_orders']) * 100
+#         temp['Driver'] = factor
+#         temp['Factor_Level'] = factor + " : " + temp[factor].astype(str)
+#         all_factors.append(temp[['Factor_Level','Driver','delay_percent','total_orders','avg_delay']])
+
+#     # combined all drivers
+#     final_df = pd.concat(all_factors)
+#     top_factors = final_df.sort_values('delay_percent', ascending=False).head(10)
+#     plt.figure()
+#     bars = plt.barh(top_factors['Factor_Level'], top_factors['delay_percent'])
+    
+#     plt.xlabel('Delay Percentage (%)')
+#     plt.ylabel('Driver Factors')
+#     plt.title(f"Top Drivers of late delivery in {region}")
+#     plt.grid(True, linestyle=':', alpha=0.5)
+#     plt.gca().invert_yaxis()
+
+#     for bar in bars:
+#         width = bar.get_width()
+#         plt.text(
+#             width - 10,
+#             bar.get_y() + bar.get_height()/2,
+#             f'{width:.1f}%',
+#             va='center',
+#             fontsize=10,
+#             color='white'
+#         )
+
+#     plt.tight_layout()
+#     plt.savefig(f'figures/top_drivers_{region}.png', dpi=300, bbox_inches='tight')
+#     plt.show()
+
+# top_drivers_for_region('East Africa')
+
+
+# after finding the root cause, analyzed that this issues are arise on a specific period of time in a year or entire year (Time-Based Analysis)
+# dataset is of 3 years -
+# max : 2018-02-06 22:14:00
+# min : 2015-01-03 00:00:00
+
+# delay % by month, day of week, hour
+delay_by_month = (df.groupby('order_month')['Is_Delayed'].mean().reset_index())
+delay_by_month['delay_percentage'] = delay_by_month['Is_Delayed']*100
+
+delay_by_dow = (df.groupby('order_day')['Is_Delayed'].mean().reset_index())
+delay_by_dow['delay_percentage'] = delay_by_dow['Is_Delayed']*100
+
+delay_by_hour = (df.groupby('order_hour')['Is_Delayed'].mean().reset_index())
+delay_by_hour['delay_percentage'] = delay_by_hour['Is_Delayed']*100
+
+# print("dataset by month and delay percentage:")
+# print(delay_by_month.round(2))
+# print("\ndataset by day of week and delay percentage:")
+# print(delay_by_dow.round(2))
+# print("\ndataset by hour and delay percentage:")
+# print(delay_by_hour.round(2))
+
+
+# now, visualized everything with bar plots 
+
+fig,(ax1,ax2,ax3) = plt.subplots(1,3,figsize=(18,6))
+
+
+# subplot 1 : delay % by month
+# ax1.plot(delay_by_month['order_month'], delay_by_month['delay_percentage'],marker='o',color=primary_color)
+# ax1.set_xticks(range(1,13))
+# ax1.set_xticklabels(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], rotation=45, ha='right')
+# ax1.set_title('Delay Percentage by Month')
+# ax1.set_xlabel('Month')
+# ax1.set_ylabel('Delay Percentage (%)')
+# ax1.grid(True, linestyle=':', alpha=0.5)
+
+# annotation top 3 highest
+# top3_month = delay_by_month.nlargest(3,'delay_percentage')
+# for idx,row in top3_month.iterrows():
+#     ax1.annotate(
+#         f"{row['delay_percentage']:.1f}%", 
+#         (row['order_month'], row['delay_percentage']), 
+#         textcoords="offset points", 
+#         xytext=(0,10), 
+#         ha='center',
+#         fontsize=10,
+#         color=danger_color
+#     )
+
+
+# subplot 2 : delay % by day of week
+# day_order = [
+#     "Monday",
+#     "Tuesday",
+#     "Wednesday",
+#     "Thursday",
+#     "Friday",
+#     "Saturday",
+#     "Sunday"
+# ]
+# delay_by_dow['order_day'] = pd.Categorical(delay_by_dow['order_day'], categories=day_order, ordered=True)
+# delay_by_dow = delay_by_dow.sort_values('order_day')
+
+# ax2.bar(delay_by_dow['order_day'], delay_by_dow['delay_percentage'], color=primary_color)
+# ax2.set_xticklabels(delay_by_dow['order_day'], rotation=30, ha='right')
+# ax2.set_title('Delay % by day of week')
+# ax2.set_xlabel('Day of week')
+# ax2.set_ylabel('Delay Percentage (%)')
+# ax2.grid(True, linestyle=':', alpha=0.5)
+
+# annotation top 3 highest
+# top3_dow = delay_by_dow.nlargest(3,'delay_percentage')
+# for idx,row in top3_dow.iterrows():
+#     height = row['delay_percentage']
+#     ax2.text(
+#        row['order_day'], 
+#        height + 0.5, 
+#        f"{height:.1f}%", 
+#        ha='center',
+#        va='bottom',
+#        fontsize=10,
+#        color=danger_color
+#    )
+
+
+# subplot 3 : delay % by hour
+# ax3.plot(delay_by_hour['order_hour'], delay_by_hour['delay_percentage'],marker='o',color=primary_color)
+# ax3.set_title('Delay Percentage by Hour')
+# ax3.set_xlabel('Hour')
+# ax3.set_ylabel('Delay Percentage (%)')
+# ax3.grid(True, linestyle=':', alpha=0.5)
+
+# annotation top 3 highest
+# top3_hour = delay_by_hour.nlargest(3,'delay_percentage')
+# for idx,row in top3_hour.iterrows():
+#     ax3.annotate(
+#         f"{row['delay_percentage']:.1f}%", 
+#         (row['order_hour'], row['delay_percentage']), 
+#         textcoords="offset points", 
+#         xytext=(0,10), 
+#         ha='center',
+#         fontsize=10,
+#         color=danger_color
+#     )
+
+# plt.tight_layout()
+# plt.savefig('figures/delay_percentage_by_time.png', dpi=300, bbox_inches='tight')
+# plt.show()
+
+
