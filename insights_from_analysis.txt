@@ -1,0 +1,127 @@
+TABLE OF CONTENT :
+1. Executive Summary
+2. Business Context and Objectives
+3. Key Performance Indicators (KPI's)
+4. Profitability Analysis
+    4.1 Profit Distribution
+    4.2 Delay Distribution & Profit vs Delay Days
+5. Bottleneck Detection
+6. Root Cause Analysis
+7. Time-Based Analysis
+8. Strategic Recommendations
+9. Conclusion
+
+###########################################
+
+1. Executive Summary
+This report presents a comprehensive analysis of delivery operations of a global e-commerce company managing end-to-end order fullfillment across multiple regions. The analysis croves 1,72,765 orders spanning Jan 2015 through Jan 2018, focusing on identifying root causes of chronic late deliveries, quantifying their financial impact, and establisheding a data-driven framework for improvement
+
+The headline finding are shocking i.e : 54.71% of all orders are delivered late, costing the Business $2.1M in eroded Profitability on delayed orders alone. While total profit across fullfilled orders reached $7.5M, the persistent late-delivery problem represens both a significant financial drain and a major customer experience risk.
+
+KEY FINDINGS :
+overall late delivery rate : 54.71%
+on time delivery rate : 45.29%
+total orders analyzed : 1,72,765
+total profit (Profitable orders) : $7.5M
+profit at risk(delayed orders) : $2.1M
+
+
+###########################################
+
+2. Business Context and Objectives
+The company operates a gloabl e-commerce platform selling productss across categories including sporting goods, fitness equipment, outdoor gear, footwear, and apparel across multiple international regions
+
+CORE PROBLEM :
+Actual shipping times frequently deviate from scheduled delivery windows, creating eroded customer trust reduced order profitability and an inability to make reliable commitments to buyers at point of purchase
+
+
+ANALYTICAL OBJECTIVES :
+1. Understand the current state of delivery performance across all dimensions (region, mode, time, segment)
+2. Quantify the financial impact of delays an order profitability
+3. Identify the primary operational bottlenecks driving late deliveries
+4. Build a predictive model to flag high-risk orders before they are shipped (advanced)
+5. Deliver actionable recommendations to improve on-time delivery and profitability
+
+
+###########################################
+
+3. Key Performance Indicators (KPI's)
+The following KPI's were computed directly from the cleaned dataset to establish a performance baseline
+> total orders : 1,72,765 
+> late deliveries : 94,523
+> late delivery % : 54.71% 
+> on time delivery % : 45.29%
+> total profit (Profitable orders) : $7.5M
+> profit at risk(delayed orders) : $2.1M
+> 90th percentile delay :  3 days
+> avg order profit : $22.03
+
+Notes : 
+1. late delivery rate at 54.21% : more than half of all orders arrive late. this is not an edge-case problem, it is the default experience for the majority of customer
+2. $2.1M profit at risk : orders that experienced delays collectivly generated $2.1M in profit that is under constant pressure from further operational deterioration
+3. 90th percentile delay = 3days : even the most extreme cases are contained within 3 days of lateness, suggesting the problem is systemic and process-driven rather than being caused by rare outliers.
+
+
+###########################################
+
+4. Profitability Analysis
+4.1 Profit Distribution
+Order-level profitability was classified into 3 tiers based on order profit per order, while 80.7% of orders are Profitable and the 18.7% loss-making share represents a meaningfull drag that s disproportationtely concentrated amoung delayed shipments
+Figure : profitability_distribution
+
+The delay Distribution shows that 31.0% of all orders arrive exactly 1 day late the single largest cohort. Combined, orders delayed by 1-4 days account for 54.7% of all order volume, directly mapping to the overall late delivery rate
+Figure : profit_analysis_by_delay
+
+Observation : mean profit per order remains stable at approximately $21-$23 across all delay levels. the profitability problem is therefore driven by volume of delayed orders, not by individual order economics making systemic throughout improvement the highest leveraged intervention
+
+
+###########################################
+
+5. Bottleneck Detection
+Delay percentage was computed across 6 key operational dimensions, the charts below revea where the fullfillment process breaks down most severely.
+Figure : delay_percentage_by_category
+
+Notes : 
+1. Shipping mode is the # 1 lever : first class: 100% delay rate, second class: 79.8%, standard class: 39.8%, same day: 0%. The mode assignment logic is the most impactful single variable to fix
+2. Regional spread is narrow (55-59)% : cntral africa leads at 58.7% but all regions bluster between 55-59%, this rules out a localised failure and confirms a company-wide systemic issue
+3. Customer Segments nearly identical (54.5-55.4)% : no segment recevices perferntial service. all customers : consumer, corporate, home office experience the same broken delivery promise
+4. Health & Beauty (56.9)% & Pet Shop (56.6)% lead by department : these departments marginally outpace others in delay rate, warranting an inventory and carrier audit for these product categories.
+
+
+###########################################
+
+6. Root Cause Analysis
+Central africa was selected for deep-dive root cause analysis as the highest-delay region (58.7)%. The chart below ranks the top 10 driver factors by delay percentage within this region
+Figure : top_drivers_Central Africa
+
+
+###########################################
+
+7. Time-Based Analysis
+3 temporal dimensions were analyzed: month of year, day of week, hour of day. While delay raes are relatively stable across all dimensions(53-57)%  specific peaks highlight oppounities for targeted capacity planning
+Figure : delay_percentage_by_time
+
+Notes :
+1. peak delay month (august & september - 55.4%) & (december - 55.2%) : august and september are the highest months at 55.4% with december close behind. these reflect mid-year promotions and Q4 holidays surge overwhelming sullfilment capacity, july represents a notable low-point (53.75)% confirming seasonal variation is plannable
+2. day of week (variance is minimal) : monday (55.5%) and sunday (55.2%) are the peak days, but the spread across the week is less than 1% point, day of week is not a meaningful lever for operational intervention
+3. inter-day peaks (hour 21 - 57.1%, hour 11 - 56.7%, hour 12 - 56%) : late evening orders (hour 21) have the highest delay rate at 57.1% likely reflecting processing cutoff windows. midday peaks suggest bottlenecks during peak-volume hours
+
+
+###########################################
+
+8. Strategic Recommendations
+Based on the findings across all analytical dimensions, the following priortized actions are recommendations :
+1. CRITIAL - immediately audit first class & second class shipping capacity : first class shipping has a 100% delay rate and second class 79.8%, these modes operates in complete contradiction to their brand promise, conduct an immediate carrier SLA audit. Until resolved, consider suspending the first class and repricing to reflect actual performance
+2. HIGH - Resolve payment processsing bottlenecks : Orders in PAYMENT_REVIEW (55.3% overall, 80% in central africa) and PENDING_PAYMENT(55%) have significantly elevated delay rates. Introduce automcated escalation for stalled payment reviews exceeding 2 hours
+3. MEDIUM - Develop seasonal surge capacity plans : august, october(5.4%), december(55.2%) are peak delay months. Build pre-season capacity plans including temporary logistics partnerships, inventorypre-positioning, and adjusted delivery promise windows
+4. MEDIUM - Default to standard class for eligible orders : standard class achieves 39.8% delay rate, for superior to first and second class. re-evaluate shipping mode assignment logic to default eligible orders to standard class, particularly in regions and departments with poor premium mode performance
+5. MEDIUM - outdoors(61.3%) and golf(90.8%) in central africa show significantly elevated delay rates. conduct a warehouse-level audit of stock availability pick and pack times, and carrier assignment for these product categories.
+6. LOW - reduce loss making order share (18.7%) : these orders warrants a seprate pricing and discount review. combine with delay Analysis to Identify wheather discounted orders are disproportationtely late creating a compounded margin problem
+
+
+###########################################
+
+9. Conclusion
+This analysis has surfaced a clear and urgent picture: a global e-commerceoperation where the majority of orders (54.71%) fail to meet their promised delivery windows, costing $2.1M in at-risk profit undermining customer trust at scale
+the root causes are identifiable and addressable. Shipping mode misconfriguration (first class 100% late, second class at 79.8%) is the dominant operational failure. Payment processing friction creates a secondary bottleneck, seasonal volume spikes are not adequetly planned for and geographic disparties, while present are secondary to the systemic company-wide pattern
+

@@ -477,4 +477,3 @@ fig,(ax1,ax2,ax3) = plt.subplots(1,3,figsize=(18,6))
 # plt.savefig('figures/delay_percentage_by_time.png', dpi=300, bbox_inches='tight')
 # plt.show()
 
-
